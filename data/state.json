@@ -1,0 +1,31 @@
+{
+ "version": 1,
+ "settings": {
+  "layout": "collage",
+  "columns": 0,
+  "background": "wallpaper",
+  "showChips": true,
+  "showSubtitle": true,
+  "launchMode": "single",
+  "sort": "custom",
+  "fullscreen": false,
+  "autostart": false,
+  "windowMode": "maximized"
+ },
+ "apps": {
+  "d230b958435a": {
+   "pinned": true
+  },
+  "a1c9b2f8c110": {
+   "pinned": true
+  },
+  "3a0935a77afc": {
+   "pinned": true
+  },
+  "0b1868ae2477": {
+   "pinned": true
+  }
+ },
+ "order": [],
+ "updated": 1792413325
+}

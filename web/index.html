@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>方块桌面 · GridDesk</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23111620'/%3E%3Crect x='13' y='13' width='16' height='16' rx='5' fill='%237aa2ff'/%3E%3Crect x='35' y='13' width='16' height='16' rx='5' fill='%235fe3c1'/%3E%3Crect x='13' y='35' width='16' height='16' rx='5' fill='%23ffcc7a'/%3E%3Crect x='35' y='35' width='16' height='16' rx='5' fill='%23f08bb4'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body class="booting">
+  <!-- 背景层 -->
+  <div class="bg" aria-hidden="true">
+    <div class="bg-wall" id="bgWall"></div>
+    <div class="bg-tint"></div>
+    <div class="bg-orbs"><i></i><i></i><i></i></div>
+    <div class="bg-grain"></div>
+    <div class="bg-vignette"></div>
+  </div>
+
+  <div class="app">
+    <div class="stage">
+      <!-- 磁贴墙（左右两片，中间留出导航栏） -->
+      <div class="wall" id="gridWrap" aria-live="polite">
+        <div class="wall-grid" id="grid"></div>
+        <div class="wall-empty" id="empty" hidden></div>
+        <!-- 右上角：品牌 / 时钟 / 收进一面墙 -->
+        <aside class="corner-card" id="cornerCard">
+          <div class="brand">
+            <div class="brand-mark" aria-hidden="true">
+              <span></span><span></span><span></span><span></span>
+            </div>
+            <div class="brand-text">
+              <b>方块桌面</b>
+              <em>GRID DESK</em>
+            </div>
+          </div>
+          <div class="corner-body">
+            <h3>把应用收进一面墙</h3>
+            <p>单击磁贴打开 · 右键固定 / 改分类</p>
+          </div>
+          <div class="corner-foot">
+            <div class="clock" id="clock">
+              <b>--:--</b>
+              <span>--</span>
+            </div>
+            <div class="corner-stats" id="cornerStats">正在读取应用列表…</div>
+          </div>
+        </aside>
+      </div>
+      <div class="wall-fade" id="gridFade" aria-hidden="true"></div>
+
+      <!-- 中间竖栏：导航 + 已打开 + 工具 -->
+      <div class="nav-center" id="dock">
+        <nav class="rail-nav" id="railNav" aria-label="视图">
+          <button class="rail-item is-active" data-view="all">
+            <span class="rail-ico">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+            </span>
+            <span class="rail-label">全部</span>
+            <span class="rail-count" data-count="all">0</span>
+          </button>
+          <button class="rail-item" data-view="pinned">
+            <span class="rail-ico">
+              <svg viewBox="0 0 24 24"><path d="M12 3.6l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8L3.5 9.8l5.9-.9z"/></svg>
+            </span>
+            <span class="rail-label">常用</span>
+            <span class="rail-count" data-count="pinned">0</span>
+          </button>
+          <button class="rail-item" data-view="recent">
+            <span class="rail-ico">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4"/><path d="M12 7.6v4.7l3.1 1.9"/></svg>
+            </span>
+            <span class="rail-label">最近</span>
+            <span class="rail-count" data-count="recent">0</span>
+          </button>
+          <button class="rail-item" data-view="categories">
+            <span class="rail-ico">
+              <svg viewBox="0 0 24 24"><path d="M12 3.4l8.6 4.3L12 12 3.4 7.7z"/><path d="M3.4 12.2L12 16.5l8.6-4.3"/><path d="M3.4 16.5L12 20.8l8.6-4.3"/></svg>
+            </span>
+            <span class="rail-label">分类</span>
+            <span class="rail-count" data-count="categories">0</span>
+          </button>
+        </nav>
+
+        <div class="nav-sep"></div>
+
+        <section class="nav-opened" id="openedSection">
+          <div class="nav-label">已打开</div>
+          <div class="opened-icons" id="openedList">
+            <span class="opened-hint" title="打开应用后会出现在这里">＋</span>
+          </div>
+        </section>
+
+        <div class="nav-spacer"></div>
+
+        <div class="nav-tools">
+          <button class="icon-btn" id="btnSearch" title="搜索 ( / )" aria-label="搜索">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.4"/><path d="M16.2 16.2L21 21"/></svg>
+          </button>
+          <button class="icon-btn" id="btnRefresh" title="重新扫描" aria-label="重新扫描">
+            <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4.5V10h-5.4"/></svg>
+          </button>
+          <button class="icon-btn" id="btnSettings" title="设置" aria-label="设置">
+            <svg viewBox="0 0 24 24"><path d="M4 7h10"/><path d="M18 7h2"/><circle cx="16" cy="7" r="2"/><path d="M4 17h2"/><path d="M10 17h10"/><circle cx="8" cy="17" r="2"/><path d="M4 12h6"/><path d="M14 12h6"/><circle cx="12" cy="12" r="2"/></svg>
+          </button>
+        </div>
+
+        <button class="avatar" id="avatar" title="本地用户" aria-label="用户">
+          <span id="avatarText">G</span>
+        </button>
+      </div>
+
+      <!-- 底部左：最近打开（播放条样式）+ 视图信息 -->
+      <div class="bottom-left">
+        <button class="recent-card" id="recentCard" title="打开最近使用的应用">
+          <span class="recent-cover" id="recentCover"></span>
+          <span class="recent-text">
+            <span class="recent-label" id="recentLabel">最近打开</span>
+            <b id="recentName">还没有打开过应用</b>
+            <span class="recent-sub" id="recentSub">单击磁贴打开，这里会记住最近用的应用</span>
+          </span>
+          <span class="recent-play" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M8 5.5l10 6.5-10 6.5z"/></svg>
+          </span>
+        </button>
+        <div class="view-info" id="viewInfo">
+          <b id="viewTitle">全部</b>
+          <span id="viewSub">正在读取应用列表…</span>
+          <small>单击打开 · 右键更多 · / 搜索</small>
+        </div>
+        <!-- 分类筛选条（仅分类视图显示，替代视图信息卡） -->
+        <div class="chips" id="chips" hidden></div>
+      </div>
+
+      <!-- 底部右：布局 / 排序 / 全屏 / 退出 -->
+      <div class="bottom-right">
+        <div class="seg mini" id="layoutSeg" role="group" aria-label="布局">
+          <button data-layout="square" class="is-active">方格</button>
+          <button data-layout="collage">拼贴</button>
+          <button data-layout="compact">紧凑</button>
+        </div>
+        <button class="icon-btn glass" id="btnSort" title="排序" aria-label="排序">
+          <svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M6.5 12h11"/><path d="M9.5 17h5"/></svg>
+        </button>
+        <button class="icon-btn glass" id="btnFullscreen" title="全屏 (F11)" aria-label="全屏">
+          <svg viewBox="0 0 24 24"><path d="M4 9V4h5"/><path d="M20 15v5h-5"/><path d="M15 4h5v5"/><path d="M9 20H4v-5"/></svg>
+        </button>
+        <button class="icon-btn glass" id="btnQuit" title="退出方块桌面" aria-label="退出">
+          <svg viewBox="0 0 24 24"><path d="M12 4v8"/><path d="M6.5 7a8 8 0 1 0 11 0"/></svg>
+        </button>
+      </div>
+
+      <div class="scanbar" id="scanbar" hidden>
+        <div class="scanbar-fill" id="scanFill"></div>
+        <div class="scanbar-text"><span id="scanText">正在扫描应用…</span><b id="scanPct">0%</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 设置抽屉 -->
+  <aside class="drawer" id="drawer" aria-hidden="true" aria-label="设置">
+    <div class="drawer-head">
+      <h2>设置</h2>
+      <button class="icon-btn" id="drawerClose" aria-label="关闭设置">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="drawer-body">
+      <section class="setting-group">
+        <h3>外观</h3>
+        <div class="setting-row">
+          <label>布局</label>
+          <div class="seg small" id="setLayout">
+            <button data-value="square">方格</button>
+            <button data-value="collage">拼贴</button>
+            <button data-value="compact">紧凑</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <label>每行总列数</label>
+          <div class="seg small" id="setColumns">
+            <button data-value="0">自动</button>
+            <button data-value="4">4</button>
+            <button data-value="6">6</button>
+            <button data-value="8">8</button>
+            <button data-value="10">10</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <label>背景</label>
+          <div class="seg small" id="setBg">
+            <button data-value="wallpaper">壁纸模糊</button>
+            <button data-value="graphite">纯深色</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <label>显示分类标签</label>
+          <button class="switch" data-key="showChips" role="switch" aria-checked="false"></button>
+        </div>
+        <div class="setting-row">
+          <label>显示使用时间</label>
+          <button class="switch" data-key="showSubtitle" role="switch" aria-checked="false"></button>
+        </div>
+      </section>
+
+      <section class="setting-group">
+        <h3>行为</h3>
+        <div class="setting-row">
+          <label>启动方式</label>
+          <div class="seg small" id="setLaunch">
+            <button data-value="single">单击</button>
+            <button data-value="double">双击</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <label>启动窗口</label>
+          <div class="seg small" id="setWindow">
+            <button data-value="maximized">最大化</button>
+            <button data-value="windowed">窗口化</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <label>开机自启</label>
+          <button class="switch" id="switchAutostart" role="switch" aria-checked="false"></button>
+        </div>
+        <div class="setting-row">
+          <label>启动时全屏</label>
+          <button class="switch" data-key="fullscreen" role="switch" aria-checked="false"></button>
+        </div>
+      </section>
+
+      <section class="setting-group">
+        <h3>数据</h3>
+        <div class="btn-row">
+          <button class="btn" id="btnRescan">重新扫描应用</button>
+          <button class="btn" id="btnRebuild">重建图标与封面</button>
+        </div>
+        <div class="btn-row">
+          <button class="btn" id="btnOpenData">打开数据目录</button>
+          <button class="btn danger" id="btnQuit2">退出应用</button>
+        </div>
+        <p class="tip" id="dataPath"></p>
+      </section>
+
+      <section class="setting-group about">
+        <h3>关于</h3>
+        <p>方块桌面 GridDesk <b id="aboutVer">v0.1.0</b></p>
+        <p class="dim">把本机应用收进一面方格墙，单击即开。全部数据只保存在本地 <code>data/</code> 目录，不会上传。</p>
+      </section>
+    </div>
+  </aside>
+  <div class="drawer-mask" id="drawerMask" hidden></div>
+
+  <!-- 搜索 -->
+  <div class="modal" id="searchModal" hidden aria-hidden="true">
+    <div class="modal-mask" data-close="1"></div>
+    <div class="search-panel" role="dialog" aria-label="搜索应用">
+      <div class="search-head">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.4"/><path d="M16.2 16.2L21 21"/></svg>
+        <input id="searchInput" type="text" placeholder="搜索应用名称、分类、路径…" autocomplete="off" spellcheck="false">
+        <kbd>Esc</kbd>
+      </div>
+      <div class="search-list" id="searchList"></div>
+    </div>
+  </div>
+
+  <!-- 右键菜单 / 排序菜单 -->
+  <div class="menu" id="ctxMenu" hidden role="menu"></div>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
