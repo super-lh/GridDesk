@@ -58,7 +58,6 @@ DEFAULT_SETTINGS = {
     "background": "wallpaper",  # wallpaper 壁纸模糊 | graphite 纯深色
     "showChips": True,         # 磁贴左上角分类标签
     "showSubtitle": True,      # 磁贴底部副标题（使用时间）
-    "launchMode": "single",    # single 单击启动 | double 双击启动
     "sort": "custom",          # custom | name | recent | frequent
     "fullscreen": False,       # 启动时全屏
     "autostart": False,        # 开机自启
@@ -128,7 +127,6 @@ class Store:
         "layout": {"square", "collage", "compact"},
         "background": {"wallpaper", "graphite"},
         "sort": {"custom", "name", "recent", "pinned"},
-        "launchMode": {"single", "double"},
         "windowMode": {"maximized", "windowed"},
     }
 

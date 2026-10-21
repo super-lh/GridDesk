@@ -454,13 +454,18 @@ def check_drawer(browser):
       const switches = Array.from(document.querySelectorAll('.switch[data-key]')).map(s => s.dataset.key + '=' + s.getAttribute('aria-checked'));
       const active = Array.from(document.querySelectorAll('#setLayout button')).filter(b => b.classList.contains('is-active')).map(b => b.dataset.value);
       return {open: d.classList.contains('is-open'), x: rect.x, w: rect.width, innerW: innerWidth,
-              switches, activeLayout: active, mask: !document.getElementById('drawerMask').hidden};
+              switches, activeLayout: active, mask: !document.getElementById('drawerMask').hidden,
+              launchSetting: !!document.getElementById('setLaunch'),
+              windowSetting: !!document.getElementById('setWindow')};
     })()""")
     add("设置抽屉打开", "pass" if st["open"] and st["mask"] else "fail", "open=%s mask=%s" % (st["open"], st["mask"]))
     add("设置抽屉在视口内", "pass" if st["x"] >= -1 and st["x"] + st["w"] <= st["innerW"] + 1 else "warn",
         "x=%.0f w=%.0f innerW=%d" % (st["x"], st["w"], st["innerW"]))
     add("设置项状态回显", "pass" if st["switches"] and st["activeLayout"] else "warn",
         "switches=%s layout=%s" % (",".join(st["switches"]), st["activeLayout"]))
+    add("「启动方式」设置已移除（改为磁贴「打开」按钮）", "pass"
+        if not st["launchSetting"] and st["windowSetting"] else "fail",
+        "启动方式=%s 启动窗口=%s" % (st["launchSetting"], st["windowSetting"]))
     # 切换开关 → 磁贴分类角标消失
     browser.evaluate("document.querySelector('.switch[data-key=showChips]').click()")
     time.sleep(0.8)
@@ -517,6 +522,41 @@ def check_context_menu(browser):
     # 分类子菜单（点击「修改分类」）
     browser.evaluate("document.body.click()")
     time.sleep(0.3)
+
+
+def check_tile_open_button(browser):
+    """点磁贴图标只选中、不启动；只有磁贴上的「打开」按钮才启动（打桩 fetch 避免真拉起应用）。"""
+    browser.evaluate(r"""(() => {
+      window.__qaLaunch = [];
+      if (!window.__qaRealFetch) window.__qaRealFetch = window.fetch.bind(window);
+      window.fetch = function(url, opts) {
+        const u = String(url);
+        if (u.indexOf('/api/launch') >= 0) {
+          window.__qaLaunch.push(u);
+          return Promise.resolve(new Response(JSON.stringify({ok: true, launchCount: 1}),
+            {status: 200, headers: {'Content-Type': 'application/json'}}));
+        }
+        return window.__qaRealFetch(url, opts);
+      };
+    })()""")
+    n = browser.evaluate("document.querySelectorAll('#grid .tile').length")
+    buttons = browser.evaluate("document.querySelectorAll('#grid .tile-open').length")
+    add("每个磁贴都有「打开」按钮", "pass" if n and buttons == n else "fail",
+        "tiles=%d buttons=%d" % (n, buttons))
+    browser.evaluate("document.querySelector('#grid .tile').click()")
+    time.sleep(0.3)
+    clicked = browser.evaluate(
+        "({launch: window.__qaLaunch.length, selected: !!document.querySelector('#grid .tile.is-selected')})")
+    add("点磁贴图标不启动（只选中）", "pass" if clicked["launch"] == 0 and clicked["selected"] else "fail",
+        "launch=%d selected=%s" % (clicked["launch"], clicked["selected"]))
+    browser.evaluate("document.querySelector('#grid .tile-open').click()")
+    time.sleep(0.6)
+    opened = browser.evaluate(
+        "({launch: window.__qaLaunch.length, toast: (document.querySelector('.toast') || {}).textContent || ''})")
+    add("点「打开」按钮启动应用", "pass" if opened["launch"] == 1 else "fail",
+        "launch=%d toast=%s" % (opened["launch"], opened["toast"]))
+    browser.evaluate("try { window.fetch = window.__qaRealFetch; } catch (e) { /* ignore */ }")
+    time.sleep(0.2)
 
 
 def check_keyboard(browser):
@@ -799,6 +839,7 @@ def main():
         check_drawer(browser)
         check_sort_menu(browser)
         check_context_menu(browser)
+        check_tile_open_button(browser)
         check_keyboard(browser)
         check_scroll(browser)
         check_clock(browser)

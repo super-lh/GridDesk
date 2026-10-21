@@ -38,17 +38,17 @@
   {
    "name": "静态资源 /",
    "status": "pass",
-   "detail": "status=200 size=12641"
+   "detail": "status=200 size=12432"
   },
   {
    "name": "静态资源 /app.css",
    "status": "pass",
-   "detail": "status=200 size=36540"
+   "detail": "status=200 size=37198"
   },
   {
    "name": "静态资源 /app.js",
    "status": "pass",
-   "detail": "status=200 size=47090"
+   "detail": "status=200 size=47692"
   },
   {
    "name": "静态资源 /brand.png",
@@ -88,7 +88,7 @@
   {
    "name": "页面加载与磁贴渲染",
    "status": "pass",
-   "detail": "tiles=52 c=3 tile=230.33px"
+   "detail": "tiles=52 c=3 tile=254.83px"
   },
   {
    "name": "磁贴为正方形",
@@ -113,22 +113,22 @@
   {
    "name": "中间竖栏贴满高度",
    "status": "pass",
-   "detail": "top=10.0 bottom=872.0 innerH=882"
+   "detail": "top=10.0 bottom=832.0 innerH=842"
   },
   {
    "name": "右上角卡片位置",
    "status": "pass",
-   "detail": "visible=True right=1528.0 wallRight=1528.0"
+   "detail": "visible=True right=1675.0 wallRight=1675.0"
   },
   {
    "name": "底部卡片不溢出",
    "status": "pass",
-   "detail": "recentRight=302.0 rightGroupRight=1528.0"
+   "detail": "recentRight=302.0 rightGroupRight=1675.0"
   },
   {
    "name": "底部两组卡片不重叠",
    "status": "pass",
-   "detail": "recent.right=302.0 bottomRight.left=1275.0"
+   "detail": "recent.right=302.0 bottomRight.left=1422.0"
   },
   {
    "name": "方格布局：无 2×2 磁贴",
@@ -163,12 +163,12 @@
   {
    "name": "常用视图渲染",
    "status": "pass",
-   "detail": "tiles=5（固定 4 个；常用视图=固定+使用过的）"
+   "detail": "tiles=7（固定 4 个；常用视图=固定+使用过的）"
   },
   {
    "name": "最近视图显示使用记录",
    "status": "pass",
-   "detail": "tiles=1（有使用记录时应 >0）"
+   "detail": "tiles=4（有使用记录时应 >0）"
   },
   {
    "name": "分类视图渲染",
@@ -223,12 +223,17 @@
   {
    "name": "设置抽屉在视口内",
    "status": "pass",
-   "detail": "x=1154 w=384 innerW=1538"
+   "detail": "x=1301 w=384 innerW=1685"
   },
   {
    "name": "设置项状态回显",
    "status": "pass",
    "detail": "switches=showChips=true,showSubtitle=true,fullscreen=false layout=['collage']"
+  },
+  {
+   "name": "「启动方式」设置已移除（改为磁贴「打开」按钮）",
+   "status": "pass",
+   "detail": "启动方式=False 启动窗口=True"
   },
   {
    "name": "切换「显示分类标签」生效",
@@ -256,6 +261,21 @@
    "detail": "items=6 labels=打开,Enter,取消固定,P,重命名…,修改分类,打开文件位置,隐藏此应用"
   },
   {
+   "name": "每个磁贴都有「打开」按钮",
+   "status": "pass",
+   "detail": "tiles=52 buttons=52"
+  },
+  {
+   "name": "点磁贴图标不启动（只选中）",
+   "status": "pass",
+   "detail": "launch=0 selected=True"
+  },
+  {
+   "name": "点「打开」按钮启动应用",
+   "status": "pass",
+   "detail": "launch=1 toast=已打开 Google Chrome"
+  },
+  {
    "name": "键盘方向键移动焦点",
    "status": "pass",
    "detail": "Google Chrome -> Microsoft Edge, outline=solid 2px focus-visible=True"
@@ -263,7 +283,7 @@
   {
    "name": "磁贴墙可滚动",
    "status": "pass",
-   "detail": "scrollHeight=2720 clientHeight=862 scrollTop=1858"
+   "detail": "scrollHeight=2989 clientHeight=822 scrollTop=2167"
   },
   {
    "name": "滚到底部时渐隐消失",
@@ -273,7 +293,7 @@
   {
    "name": "时钟显示正常",
    "status": "pass",
-   "detail": "时间=19:08 日期=10 月 21 日 · 周三"
+   "detail": "时间=21:18 日期=10 月 21 日 · 周三"
   },
   {
    "name": "响应式 1707x996",
@@ -303,7 +323,7 @@
   {
    "name": "页面性能",
    "status": "pass",
-   "detail": "load=21ms bootstrap=6ms js=0KB css=0KB 请求数=178"
+   "detail": "load=56ms bootstrap=1937ms js=0KB css=0KB 请求数=167"
   },
   {
    "name": "浏览器控制台无报错",
@@ -396,9 +416,9 @@
    "detail": "apps=52 phase=ready error="
   },
   {
-   "name": "端口占用时第二个实例退出",
-   "status": "pass",
-   "detail": "exit=0（应识别到服务已存在后退出）"
+   "name": "端口占用检测",
+   "status": "warn",
+   "detail": "找不到测试用运行时 python"
   }
  ],
  "console": [],

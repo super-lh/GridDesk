@@ -58,6 +58,7 @@
     searchResults: [], searchIndex: 0, cols: 6, c: 3, tile: 220, gap: 12,
     visible: [], firstPaint: true, viewKey: '', pollTimer: null,
     dragging: null, launching: new Set(), wallpaper: null,
+    selectedId: null,
   };
 
   /* ------------------------------------------------------------ 启动 */
@@ -188,6 +189,7 @@
     S.view = view;
     S.category = '全部';
     S.focusId = null;
+    S.selectedId = null;
     $$('#railNav .rail-item').forEach((b) => b.classList.toggle('is-active', b.dataset.view === view));
     renderHeader();
     renderChips();
@@ -268,13 +270,26 @@
       + ' style="grid-column:' + gridCol + ' / span ' + span
       + ';grid-row:' + (place.r + 1) + ' / span ' + span
       + ';--accent:' + (app.accent || '#7aa2ff') + ';--i:' + Math.min(index, 30) + '"'
-      + ' tabindex="0" role="button" aria-label="打开 ' + esc(app.name) + '">'
+      + ' tabindex="0" role="group" aria-label="' + esc(app.name) + '">'
       + cover
       + '<div class="tile-grad"></div>'
       + chip + pin
       + '<div class="tile-foot"><h3 class="tile-name">' + esc(app.name) + '</h3>' + sub + '</div>'
-      + '<div class="tile-open">打开 ' + ICON.arrow + '</div>'
+      + '<button class="tile-open" type="button" aria-label="打开 ' + esc(app.name) + '">'
+      + '打开 ' + ICON.arrow + '</button>'
       + '</article>';
+  }
+
+  /* 选中态：点图标本体只是选中，不会启动应用 */
+  function applyTileSelection() {
+    $$('#grid .tile').forEach((t) => {
+      t.classList.toggle('is-selected', !!S.selectedId && t.dataset.id === S.selectedId);
+    });
+  }
+
+  function selectTile(id) {
+    S.selectedId = id || null;
+    applyTileSelection();
   }
 
   /* 依次把应用排进左右两片墙：跳过中间竖栏和右上角卡片占用的格子 */
@@ -355,6 +370,7 @@
     const places = packTiles(list);
     grid.classList.toggle('no-anim', !animate);
     grid.innerHTML = places.map((p, i) => tileHTML(p.app, i, p)).join('');
+    applyTileSelection();
     S.packedC = S.c;
     if (canReorder()) {
       $$('.tile', grid).forEach((tile) => { tile.draggable = true; });
@@ -459,7 +475,7 @@
       cover.style.backgroundImage = 'none';
       label.textContent = '最近打开';
       name.textContent = '还没有打开过应用';
-      sub.textContent = '单击磁贴打开，这里会记住最近用的应用';
+      sub.textContent = '点磁贴上的「打开」启动，这里会记住最近用的应用';
       return;
     }
     cover.style.backgroundImage = app.cover ? 'url("' + app.cover + '")' : 'none';
@@ -467,7 +483,7 @@
     label.textContent = app.lastLaunch ? '最近打开' : '常用';
     name.textContent = app.name;
     const meta = subtitleOf(app);
-    sub.textContent = meta ? meta : (app.category + ' · 单击重新打开');
+    sub.textContent = meta ? meta : (app.category + ' · 点「打开」重新启动');
   }
 
   function renderCorner() {
@@ -527,7 +543,6 @@
     $$('#setLayout button').forEach((b) => b.classList.toggle('is-active', b.dataset.value === (s.layout || 'square')));
     $$('#setColumns button').forEach((b) => b.classList.toggle('is-active', Number(b.dataset.value) === Number(s.columns || 0)));
     $$('#setBg button').forEach((b) => b.classList.toggle('is-active', b.dataset.value === (s.background || 'wallpaper')));
-    $$('#setLaunch button').forEach((b) => b.classList.toggle('is-active', b.dataset.value === (s.launchMode || 'single')));
     $$('#setWindow button').forEach((b) => b.classList.toggle('is-active', b.dataset.value === (s.windowMode || 'maximized')));
     $$('.switch[data-key]').forEach((sw) => sw.setAttribute('aria-checked', s[sw.dataset.key] ? 'true' : 'false'));
     const auto = $('#switchAutostart');
@@ -986,10 +1001,6 @@
       const btn = e.target.closest('button[data-value]');
       if (btn) updateSetting('background', btn.dataset.value);
     });
-    $('#setLaunch').addEventListener('click', (e) => {
-      const btn = e.target.closest('button[data-value]');
-      if (btn) updateSetting('launchMode', btn.dataset.value);
-    });
     $$('.switch[data-key]').forEach((sw) => {
       sw.addEventListener('click', () => updateSetting(sw.dataset.key, !S.settings[sw.dataset.key]));
     });
@@ -1011,7 +1022,7 @@
     });
     $('#btnQuit2').addEventListener('click', quitApp);
 
-    // 网格交互
+    // 网格交互：点磁贴本体只选中，只有磁贴上的「打开」按钮才启动应用
     const grid = $('#grid');
     grid.addEventListener('click', (e) => {
       const tile = e.target.closest('.tile');
@@ -1019,14 +1030,22 @@
       const app = appById(tile.dataset.id);
       if (!app) return;
       S.focusId = app.id;
-      if (S.settings.launchMode === 'double') return;
-      launch(app, tile);
+      if (e.target.closest('.tile-open')) {
+        selectTile(app.id);
+        launch(app, tile);
+        return;
+      }
+      selectTile(app.id);
+      tile.focus({ preventScroll: true });
     });
     grid.addEventListener('dblclick', (e) => {
-      if (S.settings.launchMode !== 'double') return;
+      // 双击图标也不启动，避免和「打开」按钮冲突；只做选中反馈
       const tile = e.target.closest('.tile');
       if (!tile) return;
-      launch(appById(tile.dataset.id), tile);
+      const app = appById(tile.dataset.id);
+      if (!app) return;
+      S.focusId = app.id;
+      selectTile(app.id);
     });
     grid.addEventListener('contextmenu', (e) => {
       const tile = e.target.closest('.tile');
@@ -1038,6 +1057,8 @@
       openAppMenu(app, e.clientX, e.clientY);
     });
     grid.addEventListener('keydown', (e) => {
+      // 「打开」按钮自己处理 Enter / Space（原生 button 行为），这里不要抢
+      if (e.target.closest && e.target.closest('.tile-open')) return;
       if (e.key === 'Enter') {
         const tile = e.target.closest('.tile');
         if (tile) {
@@ -1125,7 +1146,8 @@
         moveFocus(e.key);
         return;
       }
-      if (e.key === 'Enter' && S.focusId) {
+      if (e.key === 'Enter' && S.focusId
+        && !(active && active.classList && active.classList.contains('tile-open'))) {
         const app = appById(S.focusId);
         if (app) launch(app, tileEl(app.id));
         return;
@@ -1138,6 +1160,7 @@
 
     document.addEventListener('click', (e) => {
       if (!e.target.closest('#ctxMenu') && !e.target.closest('#btnSort')) hideMenu();
+      if (!e.target.closest('.tile') && !e.target.closest('#ctxMenu')) selectTile(null);
     });
 
     window.addEventListener('resize', debounce(relayoutForSize, 120));

@@ -587,7 +587,7 @@ body.no-wallpaper .bg-wall { opacity: 0; }
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.07);
   background: #0b0e14;
-  cursor: pointer;
+  cursor: default;
   user-select: none;
   isolation: isolate;
   animation: tileIn 0.5s var(--ease) backwards;
@@ -697,39 +697,50 @@ body.no-wallpaper .bg-wall { opacity: 0; }
   position: absolute;
   right: 12px;
   bottom: 12px;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  height: 26px;
-  padding: 0 9px;
-  border-radius: 8px;
-  background: rgba(240, 244, 251, 0.92);
+  height: 28px;
+  padding: 0 11px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 9px;
+  background: rgba(240, 244, 251, 0.94);
   color: #0a0c11;
-  font-size: 11px;
-  font-weight: 600;
-  opacity: 0;
-  transform: translateY(4px);
-  transition: opacity 0.2s ease, transform 0.2s var(--ease);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 6px 16px -12px rgba(0, 0, 0, 0.9);
+  transition: background 0.16s ease, box-shadow 0.16s ease, transform 0.16s var(--ease);
 }
-.tile-open svg { width: 12px; height: 12px; stroke-width: 2.4; }
-.tile:hover .tile-open { opacity: 1; transform: none; }
-.tile:hover .tile-foot { padding-right: 64px; }
+.tile-open svg { width: 12px; height: 12px; stroke-width: 2.6; }
+.tile-open:hover { background: #fff; box-shadow: 0 10px 20px -12px rgba(0, 0, 0, 0.9); transform: translateY(-1px); }
+.tile-open:active { transform: translateY(0) scale(0.97); }
+.tile-open:focus-visible { outline: 2px solid rgba(122, 162, 255, 0.9); outline-offset: 2px; }
+.tile-foot { padding-right: 78px; }
+.tile.is-selected {
+  border-color: rgba(122, 162, 255, 0.68);
+  box-shadow: 0 0 0 2px rgba(122, 162, 255, 0.28);
+}
 
-.tile.is-pinned .tile-foot { left: 18px; right: 18px; bottom: 16px; gap: 4px; }
+.tile.is-pinned .tile-foot { left: 18px; right: 18px; bottom: 16px; gap: 4px; padding-right: 122px; }
 .tile.is-pinned .tile-name { font-size: 19px; }
 .tile.is-pinned .tile-sub { font-size: 12px; color: rgba(232, 238, 250, 0.66); }
 .tile.is-pinned .tile-chip { top: 16px; left: 16px; height: 24px; padding: 0 10px; font-size: 11px; }
 .tile.is-pinned .tile-pin { top: 15px; right: 15px; }
-.tile.is-pinned .tile-open { height: 30px; padding: 0 12px; font-size: 12px; bottom: 16px; right: 16px; }
-.tile.is-pinned:hover .tile-foot { padding-right: 104px; }
+.tile.is-pinned .tile-open { height: 32px; padding: 0 13px; font-size: 12.5px; bottom: 16px; right: 16px; }
 
 #grid.layout-compact { --radius-tile: 10px; }
 #grid.layout-compact .tile-name { font-size: 12px; }
 #grid.layout-compact .tile-sub { display: none; }
 #grid.layout-compact .tile-chip { height: 19px; padding: 0 6px; font-size: 9.5px; top: 9px; left: 9px; }
 #grid.layout-compact .tile-chip::before { display: none; }
-#grid.layout-compact .tile-foot { left: 10px; right: 10px; bottom: 9px; }
-#grid.layout-compact .tile-open { display: none; }
+#grid.layout-compact .tile-foot { left: 10px; right: 10px; bottom: 9px; padding-right: 66px; }
+#grid.layout-compact .tile-open { height: 24px; padding: 0 8px; font-size: 10.5px; gap: 3px; bottom: 8px; right: 8px; border-radius: 8px; }
+#grid.layout-compact .tile-open svg { width: 10px; height: 10px; }
 
 @keyframes tileIn {
   from { opacity: 0; transform: translateY(16px) scale(0.975); }
