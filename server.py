@@ -36,7 +36,7 @@ from core.store import (  # noqa: E402
 
 APP_NAME = "方块桌面"
 APP_CODE = "GridDesk"
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 DEFAULT_PORT = 8765
 WEB_DIR = BUNDLE_DIR / "web"
 ASSETS_DIR = BUNDLE_DIR / "assets"
@@ -179,7 +179,35 @@ def build_assets(raw, force=False):
     return accent, fallback
 
 
+def _com_init():
+    """为当前线程初始化 COM（扫描线程里 WScript.Shell / Shell 图标 API 都需要）。"""
+    try:
+        import pythoncom
+        pythoncom.CoInitialize()
+        return True
+    except Exception:
+        return False
+
+
+def _com_uninit(inited):
+    if not inited:
+        return
+    try:
+        import pythoncom
+        pythoncom.CoUninitialize()
+    except Exception:
+        pass
+
+
 def run_scan(force=False):
+    com = _com_init()
+    try:
+        return _run_scan_impl(force)
+    finally:
+        _com_uninit(com)
+
+
+def _run_scan_impl(force=False):
     with _lock:
         if STATE["scan"]["running"]:
             return False
@@ -258,10 +286,13 @@ def prepare_wallpaper():
 # 数据组装
 # --------------------------------------------------------------------------- #
 def _count_launch(app_id):
-    meta = store_.meta(app_id)
-    meta["launchCount"] = int(meta.get("launchCount") or 0) + 1
-    meta["lastLaunch"] = int(time.time())
-    store_.save()
+    # 注意：store_.meta() 对没有记录的应用返回的是临时空 dict，
+    # 直接改它不会落盘。必须通过 update_app 写入。
+    meta = store_.meta(app_id) or {}
+    store_.update_app(app_id, {
+        "launchCount": int(meta.get("launchCount") or 0) + 1,
+        "lastLaunch": int(time.time()),
+    })
 
 
 def running_app_ids(raw_apps):

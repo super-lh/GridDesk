@@ -355,6 +355,7 @@
     const places = packTiles(list);
     grid.classList.toggle('no-anim', !animate);
     grid.innerHTML = places.map((p, i) => tileHTML(p.app, i, p)).join('');
+    S.packedC = S.c;
     if (canReorder()) {
       $$('.tile', grid).forEach((tile) => { tile.draggable = true; });
     }
@@ -920,6 +921,15 @@
       renderGrid();
     }
 
+    function relayoutForSize() {
+      const prevC = S.c;
+      applyLayout();
+      // ResizeObserver 可能先于 resize 事件更新过 S.c，
+      // 所以用「上次真正排布时用的列数」判断是否需要重新排布。
+      if (S.c !== S.packedC || S.c !== prevC) renderGrid();
+      else updateGridFade();
+    }
+
     $('#layoutSeg').addEventListener('click', (e) => {
       const btn = e.target.closest('button[data-layout]');
       if (btn) updateSetting('layout', btn.dataset.layout);
@@ -1130,17 +1140,11 @@
       if (!e.target.closest('#ctxMenu') && !e.target.closest('#btnSort')) hideMenu();
     });
 
-    window.addEventListener('resize', debounce(() => {
-      applyLayout();
-      updateGridFade();
-    }, 120));
+    window.addEventListener('resize', debounce(relayoutForSize, 120));
     $('#gridWrap').addEventListener('scroll', updateGridFade, { passive: true });
     // 元素尺寸变化（含高 DPI 窗口初始化、最大化）也要重新算列宽
     if (window.ResizeObserver) {
-      const ro = new ResizeObserver(debounce(() => {
-        applyLayout();
-        updateGridFade();
-      }, 60));
+      const ro = new ResizeObserver(debounce(relayoutForSize, 60));
       ro.observe($('#gridWrap'));
     }
     // 关闭窗口时立即通知服务退出；刷新页面会重新发心跳，服务不会误退

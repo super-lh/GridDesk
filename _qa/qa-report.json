@@ -1,0 +1,412 @@
+{
+ "checks": [
+  {
+   "name": "服务可访问 /api/ping",
+   "status": "pass",
+   "detail": "status=200"
+  },
+  {
+   "name": "bootstrap 数据",
+   "status": "pass",
+   "detail": "apps=52 categories=11 pinned=4"
+  },
+  {
+   "name": "应用字段完整性",
+   "status": "pass",
+   "detail": "缺字段的应用 0 个"
+  },
+  {
+   "name": "图标/封面字段",
+   "status": "pass",
+   "detail": "缺封面=0 缺图标=0"
+  },
+  {
+   "name": "图标兜底检测",
+   "status": "pass",
+   "detail": "使用字母兜底的应用: 无"
+  },
+  {
+   "name": "全部图标/封面可访问",
+   "status": "pass",
+   "detail": "异常 0 个 []"
+  },
+  {
+   "name": "统计数字一致",
+   "status": "pass",
+   "detail": "stats.total=52 visible=52"
+  },
+  {
+   "name": "静态资源 /",
+   "status": "pass",
+   "detail": "status=200 size=12641"
+  },
+  {
+   "name": "静态资源 /app.css",
+   "status": "pass",
+   "detail": "status=200 size=36540"
+  },
+  {
+   "name": "静态资源 /app.js",
+   "status": "pass",
+   "detail": "status=200 size=47090"
+  },
+  {
+   "name": "静态资源 /brand.png",
+   "status": "pass",
+   "detail": "status=200 size=35925"
+  },
+  {
+   "name": "未知路径返回 404 (/assets/icons/not-exist.png)",
+   "status": "pass",
+   "detail": "status=404"
+  },
+  {
+   "name": "未知路径返回 404 (/assets/nope.jpg)",
+   "status": "pass",
+   "detail": "status=404"
+  },
+  {
+   "name": "未知路径返回 404 (/api/not-exist)",
+   "status": "pass",
+   "detail": "status=404"
+  },
+  {
+   "name": "PATCH 不存在的应用返回 404",
+   "status": "pass",
+   "detail": "status=404"
+  },
+  {
+   "name": "启动不存在的应用有兜底",
+   "status": "pass",
+   "detail": "status=404 body=b'{\"error\":\"\\xe5\\xba\\x94\\xe7\\x94\\xa8\\xe4\\xb8\\x8d\\xe5\\xad\\x98\\xe5\\x9c\\xa8\",\"ok\":false}\\n'"
+  },
+  {
+   "name": "非法设置值有处理",
+   "status": "pass",
+   "detail": "status=200"
+  },
+  {
+   "name": "页面加载与磁贴渲染",
+   "status": "pass",
+   "detail": "tiles=52 c=3 tile=230.33px"
+  },
+  {
+   "name": "磁贴为正方形",
+   "status": "pass",
+   "detail": "0/52 个非正方形"
+  },
+  {
+   "name": "磁贴无重叠",
+   "status": "pass",
+   "detail": "重叠对=0"
+  },
+  {
+   "name": "磁贴不超出视口",
+   "status": "pass",
+   "detail": "越界=0"
+  },
+  {
+   "name": "中间竖栏水平居中",
+   "status": "pass",
+   "detail": "偏离中心 0.0px（宽 76）"
+  },
+  {
+   "name": "中间竖栏贴满高度",
+   "status": "pass",
+   "detail": "top=10.0 bottom=872.0 innerH=882"
+  },
+  {
+   "name": "右上角卡片位置",
+   "status": "pass",
+   "detail": "visible=True right=1528.0 wallRight=1528.0"
+  },
+  {
+   "name": "底部卡片不溢出",
+   "status": "pass",
+   "detail": "recentRight=302.0 rightGroupRight=1528.0"
+  },
+  {
+   "name": "底部两组卡片不重叠",
+   "status": "pass",
+   "detail": "recent.right=302.0 bottomRight.left=1275.0"
+  },
+  {
+   "name": "方格布局：无 2×2 磁贴",
+   "status": "pass",
+   "detail": "2×2 数量=0"
+  },
+  {
+   "name": "方格布局：磁贴仍为正方形",
+   "status": "pass",
+   "detail": "非正方形=0"
+  },
+  {
+   "name": "拼贴布局：固定应用 2×2",
+   "status": "pass",
+   "detail": "2×2 数量=4"
+  },
+  {
+   "name": "拼贴布局：大磁贴仍为正方形",
+   "status": "pass",
+   "detail": "非正方形=0"
+  },
+  {
+   "name": "拼贴布局：无重叠",
+   "status": "pass",
+   "detail": "重叠对=0"
+  },
+  {
+   "name": "紧凑布局：隐藏副标题",
+   "status": "pass",
+   "detail": "可见副标题=0"
+  },
+  {
+   "name": "常用视图渲染",
+   "status": "pass",
+   "detail": "tiles=5（固定 4 个；常用视图=固定+使用过的）"
+  },
+  {
+   "name": "最近视图显示使用记录",
+   "status": "pass",
+   "detail": "tiles=1（有使用记录时应 >0）"
+  },
+  {
+   "name": "分类视图渲染",
+   "status": "pass",
+   "detail": "tiles=52"
+  },
+  {
+   "name": "全部视图渲染",
+   "status": "pass",
+   "detail": "tiles=52"
+  },
+  {
+   "name": "分类筛选条出现",
+   "status": "pass",
+   "detail": "hidden=False chips=11"
+  },
+  {
+   "name": "分类视图隐藏视图信息卡",
+   "status": "pass",
+   "detail": "infoHidden=True"
+  },
+  {
+   "name": "分类筛选生效",
+   "status": "pass",
+   "detail": "tiles=3 active=浏览3"
+  },
+  {
+   "name": "按 / 打开搜索",
+   "status": "pass",
+   "detail": "hidden=False"
+  },
+  {
+   "name": "搜索过滤结果",
+   "status": "pass",
+   "detail": "结果=2 首个=微信"
+  },
+  {
+   "name": "搜索无结果提示",
+   "status": "pass",
+   "detail": "empty=1"
+  },
+  {
+   "name": "Esc 关闭搜索",
+   "status": "pass",
+   "detail": "hidden=True"
+  },
+  {
+   "name": "设置抽屉打开",
+   "status": "pass",
+   "detail": "open=True mask=True"
+  },
+  {
+   "name": "设置抽屉在视口内",
+   "status": "pass",
+   "detail": "x=1154 w=384 innerW=1538"
+  },
+  {
+   "name": "设置项状态回显",
+   "status": "pass",
+   "detail": "switches=showChips=true,showSubtitle=true,fullscreen=false layout=['collage']"
+  },
+  {
+   "name": "切换「显示分类标签」生效",
+   "status": "pass",
+   "detail": "角标数=0"
+  },
+  {
+   "name": "设置抽屉关闭",
+   "status": "pass",
+   "detail": "closed=True"
+  },
+  {
+   "name": "排序菜单打开",
+   "status": "pass",
+   "detail": "items=4 labels=自定义,名称,最近,常用"
+  },
+  {
+   "name": "按名称排序生效",
+   "status": "pass",
+   "detail": "前6个=['爱思助手', '百度网盘', '哔哩哔哩', '电脑管家', '钉钉', '抖音']"
+  },
+  {
+   "name": "磁贴右键菜单",
+   "status": "pass",
+   "detail": "items=6 labels=打开,Enter,取消固定,P,重命名…,修改分类,打开文件位置,隐藏此应用"
+  },
+  {
+   "name": "键盘方向键移动焦点",
+   "status": "pass",
+   "detail": "Google Chrome -> Microsoft Edge, outline=solid 2px focus-visible=True"
+  },
+  {
+   "name": "磁贴墙可滚动",
+   "status": "pass",
+   "detail": "scrollHeight=2720 clientHeight=862 scrollTop=1858"
+  },
+  {
+   "name": "滚到底部时渐隐消失",
+   "status": "pass",
+   "detail": "is-hidden=True"
+  },
+  {
+   "name": "时钟显示正常",
+   "status": "pass",
+   "detail": "时间=19:08 日期=10 月 21 日 · 周三"
+  },
+  {
+   "name": "响应式 1707x996",
+   "status": "pass",
+   "detail": "c=3 tile=258.50px 竖栏裁切=False 卡片=True "
+  },
+  {
+   "name": "响应式 1560x980",
+   "status": "pass",
+   "detail": "c=3 tile=234.00px 竖栏裁切=False 卡片=True "
+  },
+  {
+   "name": "响应式 1366x728",
+   "status": "pass",
+   "detail": "c=3 tile=201.67px 竖栏裁切=False 卡片=True "
+  },
+  {
+   "name": "响应式 1200x860",
+   "status": "pass",
+   "detail": "c=2 tile=266.00px 竖栏裁切=False 卡片=True "
+  },
+  {
+   "name": "响应式 1024x768",
+   "status": "pass",
+   "detail": "c=2 tile=222.00px 竖栏裁切=False 卡片=False "
+  },
+  {
+   "name": "页面性能",
+   "status": "pass",
+   "detail": "load=21ms bootstrap=6ms js=0KB css=0KB 请求数=178"
+  },
+  {
+   "name": "浏览器控制台无报错",
+   "status": "pass",
+   "detail": "errors=0 []"
+  },
+  {
+   "name": "浏览器控制台无警告",
+   "status": "pass",
+   "detail": "warnings=0 []"
+  },
+  {
+   "name": "网络请求无失败",
+   "status": "pass",
+   "detail": "失败=0 []"
+  },
+  {
+   "name": "重扫 #1 数量一致",
+   "status": "pass",
+   "detail": "apps=52（首扫 52）"
+  },
+  {
+   "name": "重扫 #1 无系统垃圾项",
+   "status": "pass",
+   "detail": "无"
+  },
+  {
+   "name": "重扫 #1 目标路径完整",
+   "status": "warn",
+   "detail": "空目标 3 个（Shell 命名空间快捷方式，可经 .lnk 启动）: Windows Media Player Legacy, Control Panel, File Explorer"
+  },
+  {
+   "name": "重扫 #2 数量一致",
+   "status": "pass",
+   "detail": "apps=52（首扫 52）"
+  },
+  {
+   "name": "重扫 #2 无系统垃圾项",
+   "status": "pass",
+   "detail": "无"
+  },
+  {
+   "name": "重扫 #2 目标路径完整",
+   "status": "warn",
+   "detail": "空目标 3 个（Shell 命名空间快捷方式，可经 .lnk 启动）: Windows Media Player Legacy, Control Panel, File Explorer"
+  },
+  {
+   "name": "两次重扫结果一致",
+   "status": "pass",
+   "detail": "counts=[52, 52]"
+  },
+  {
+   "name": "设置：每行总列数=8",
+   "status": "pass",
+   "detail": "columns=8"
+  },
+  {
+   "name": "设置：纯深色背景",
+   "status": "pass",
+   "detail": "background=graphite"
+  },
+  {
+   "name": "API：固定应用",
+   "status": "pass",
+   "detail": "Microsoft Edge"
+  },
+  {
+   "name": "API：取消固定",
+   "status": "pass",
+   "detail": "Microsoft Edge"
+  },
+  {
+   "name": "API：重命名应用",
+   "status": "pass",
+   "detail": "Microsoft Edge -> Microsoft Edge·QA"
+  },
+  {
+   "name": "API：恢复应用名",
+   "status": "pass",
+   "detail": "当前=Microsoft Edge"
+  },
+  {
+   "name": "API：拖拽排序保存",
+   "status": "pass",
+   "detail": "status=200 前两位=['b5e634c2216f', 'd230b958435a']"
+  },
+  {
+   "name": "API：重新扫描完成",
+   "status": "pass",
+   "detail": "apps=52 phase=ready error="
+  },
+  {
+   "name": "端口占用时第二个实例退出",
+   "status": "pass",
+   "detail": "exit=0（应识别到服务已存在后退出）"
+  }
+ ],
+ "console": [],
+ "network_errors": [],
+ "screenshots": [
+  "qa-01-全部.png",
+  "qa-02-分类.png",
+  "qa-03-搜索.png",
+  "qa-04-设置.png"
+ ]
+}

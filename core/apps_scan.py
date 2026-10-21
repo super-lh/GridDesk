@@ -252,6 +252,29 @@ def _iter_shortcuts():
             continue
 
 
+def _co_init():
+    """为当前线程初始化 COM；返回是否由本次调用完成初始化（用于配对释放）。"""
+    try:
+        import pythoncom
+    except Exception:
+        return False
+    try:
+        pythoncom.CoInitialize()
+        return True
+    except Exception:
+        return False
+
+
+def _co_uninit(inited):
+    if not inited:
+        return
+    try:
+        import pythoncom
+        pythoncom.CoUninitialize()
+    except Exception:
+        pass
+
+
 class ShortcutResolver:
     """用 WScript.Shell 解析 .lnk。"""
 
@@ -265,17 +288,25 @@ class ShortcutResolver:
         return self._shell
 
     def resolve(self, lnk_path):
-        try:
-            sc = self._get_shell().CreateShortcut(str(lnk_path))
-            return {
-                "target": sc.TargetPath or "",
-                "args": sc.Arguments or "",
-                "workdir": sc.WorkingDirectory or "",
-                "iconLocation": sc.IconLocation or "",
-                "description": sc.Description or "",
-            }
-        except Exception:
-            return {"target": "", "args": "", "workdir": "", "iconLocation": "", "description": ""}
+        for attempt in range(2):
+            try:
+                sc = self._get_shell().CreateShortcut(str(lnk_path))
+                return {
+                    "target": sc.TargetPath or "",
+                    "args": sc.Arguments or "",
+                    "workdir": sc.WorkingDirectory or "",
+                    "iconLocation": sc.IconLocation or "",
+                    "description": sc.Description or "",
+                }
+            except Exception:
+                # 常见原因：调用线程没有初始化 COM（例如后台扫描线程）。
+                # 补一次 CoInitialize 后重试；仍失败则返回空信息。
+                if attempt == 0:
+                    _co_init()
+                    self._shell = None
+                else:
+                    return {"target": "", "args": "", "workdir": "",
+                            "iconLocation": "", "description": ""}
 
 
 def _dedupe(apps):
@@ -388,6 +419,16 @@ def find_relocated_exe(target):
 
 def scan_shortcuts(resolver=None, log=None, include_all=False):
     """扫描开始菜单 + 桌面快捷方式。"""
+    # 本函数可能在后台线程里被调用（服务端 run_scan），必须显式初始化 COM，
+    # 否则 WScript.Shell 解析会静默失败，导致重新扫描后目标路径全为空、系统项泄漏。
+    com = _co_init()
+    try:
+        return _scan_shortcuts_impl(resolver, log, include_all)
+    finally:
+        _co_uninit(com)
+
+
+def _scan_shortcuts_impl(resolver=None, log=None, include_all=False):
     resolver = resolver or ShortcutResolver()
     apps = []
     broken = 0

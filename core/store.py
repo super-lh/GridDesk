@@ -124,11 +124,39 @@ class Store:
             return m
 
     # ---------------- 设置 ----------------
+    SETTING_CHOICES = {
+        "layout": {"square", "collage", "compact"},
+        "background": {"wallpaper", "graphite"},
+        "sort": {"custom", "name", "recent", "pinned"},
+        "launchMode": {"single", "double"},
+        "windowMode": {"maximized", "windowed"},
+    }
+
+    @classmethod
+    def _clean_setting(cls, key, value):
+        """校验并规整一个设置值；非法值返回 None（保持原值）。"""
+        if key not in DEFAULT_SETTINGS:
+            return None
+        choices = cls.SETTING_CHOICES.get(key)
+        if choices is not None:
+            v = str(value or "").strip()
+            return v if v in choices else None
+        if key == "columns":
+            try:
+                n = int(value)
+            except (TypeError, ValueError):
+                return None
+            return n if 0 <= n <= 16 else None
+        if key in ("showChips", "showSubtitle", "fullscreen", "autostart"):
+            return bool(value)
+        return value
+
     def set_settings(self, patch):
         with self._lock:
             for k, v in (patch or {}).items():
-                if k in DEFAULT_SETTINGS:
-                    self.settings[k] = v
+                clean = self._clean_setting(k, v)
+                if clean is not None:
+                    self.settings[k] = clean
             self.save()
             return self.settings
 

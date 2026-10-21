@@ -27,7 +27,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 APP_NAME = "方块桌面"
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 DIST = ROOT / "dist"
 BUILD = ROOT / "build"
 TARGET = DIST / APP_NAME
