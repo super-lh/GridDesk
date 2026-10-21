@@ -123,27 +123,41 @@ End If
 
 SHORTCUT_VBS = r'''Option Explicit
 ' 在桌面创建「方块桌面」快捷方式
-Dim fso, shell, appDir, target, desktop, lnk
+' 图标复制到 %LOCALAPPDATA%\GridDesk\app.ico（纯英文路径）；
+' 重建前先删掉旧快捷方式，并刷新 Shell 图标缓存，避免桌面显示成白纸。
+Dim fso, shell, appDir, target, desktop, lnkPath, sc, icoSrc, icoDir, icoDst, quiet
 Set fso = CreateObject("Scripting.FileSystemObject")
 Set shell = CreateObject("WScript.Shell")
+quiet = (WScript.Arguments.Count > 0)
 appDir = fso.GetParentFolderName(WScript.ScriptFullName)
 target = appDir & "\启动方块桌面.vbs"
 If Not fso.FileExists(target) Then
-  MsgBox "没有找到 启动方块桌面.vbs，请把这个脚本放在程序目录里再运行。", 48, "方块桌面"
+  If Not quiet Then MsgBox "没有找到 启动方块桌面.vbs，请把这个脚本放在程序目录里再运行。", 48, "方块桌面"
   WScript.Quit
 End If
+icoSrc = appDir & "\assets\app.ico"
+icoDir = shell.ExpandEnvironmentStrings("%LOCALAPPDATA%") & "\GridDesk"
+icoDst = icoDir & "\app.ico"
+On Error Resume Next
+If Not fso.FolderExists(icoDir) Then fso.CreateFolder icoDir
+If fso.FileExists(icoSrc) Then fso.CopyFile icoSrc, icoDst, True
+On Error GoTo 0
+If Not fso.FileExists(icoDst) Then icoDst = icoSrc
 desktop = shell.SpecialFolders("Desktop")
-Set lnk = shell.CreateShortcut(desktop & "\方块桌面.lnk")
-lnk.TargetPath = target
-lnk.WorkingDirectory = appDir
-If fso.FileExists(appDir & "\方块桌面.exe") Then
-  lnk.IconLocation = appDir & "\方块桌面.exe,0"
-Else
-  lnk.IconLocation = appDir & "\assets\app.ico,0"
-End If
-lnk.Description = "方块桌面 · 把应用收进一面墙"
-lnk.Save
-MsgBox "已在桌面创建「方块桌面」快捷方式。", 64, "方块桌面"
+lnkPath = desktop & "\方块桌面.lnk"
+On Error Resume Next
+If fso.FileExists(lnkPath) Then fso.DeleteFile lnkPath, True
+On Error GoTo 0
+Set sc = shell.CreateShortcut(lnkPath)
+sc.TargetPath = target
+sc.WorkingDirectory = appDir
+sc.IconLocation = icoDst & ",0"
+sc.Description = "方块桌面 · 把应用收进一面墙"
+sc.Save
+On Error Resume Next
+shell.Run "ie4uinit.exe -show", 0, True
+On Error GoTo 0
+If Not quiet Then MsgBox "已在桌面创建「方块桌面」快捷方式。", 64, "方块桌面"
 '''
 
 STOP_BAT = r'''@echo off

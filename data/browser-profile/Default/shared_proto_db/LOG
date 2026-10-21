@@ -1,2 +1,3 @@
-2026/10/19-21:02:10.487 9d58 Creating DB D:\桌面app设计\data\browser-profile\Default\shared_proto_db since it was missing.
-2026/10/19-21:02:10.494 9d58 Reusing MANIFEST D:\桌面app设计\data\browser-profile\Default\shared_proto_db/MANIFEST-000001
+2026/10/21-19:46:14.473 96e8 Reusing MANIFEST D:\桌面app设计\GridDesk\data\browser-profile\Default\shared_proto_db/MANIFEST-000001
+2026/10/21-19:46:14.474 96e8 Recovering log #3
+2026/10/21-19:46:14.474 96e8 Reusing old log D:\桌面app设计\GridDesk\data\browser-profile\Default\shared_proto_db/000003.log 

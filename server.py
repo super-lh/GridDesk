@@ -15,6 +15,7 @@
 import argparse
 import json
 import os
+import shutil
 import socket
 import subprocess
 import sys
@@ -588,7 +589,16 @@ def set_autostart(enabled):
     shortcut.WorkingDirectory = str(ROOT_DIR)
     icon = ROOT_DIR / "assets" / "app.ico"
     if icon.exists():
-        shortcut.IconLocation = str(icon)
+        # 图标复制到纯英文路径（%LOCALAPPDATA%\GridDesk），避免个别系统读不到
+        # 中文路径下的 .ico，导致快捷方式在桌面/开机启动里显示成白纸
+        stable = Path(os.environ.get("LOCALAPPDATA") or Path.home()) / "GridDesk" / "app.ico"
+        try:
+            stable.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(str(icon), str(stable))
+            icon = stable
+        except Exception:
+            pass
+        shortcut.IconLocation = str(icon) + ",0"
     shortcut.Description = APP_NAME
     shortcut.Save()
     store_.set_settings({"autostart": True})
