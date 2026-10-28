@@ -17,14 +17,16 @@
   },
   "a1c9b2f8c110": {
    "pinned": true,
-   "launchCount": 1,
-   "lastLaunch": 1792583203
+   "launchCount": 2,
+   "lastLaunch": 1792594331
   },
   "3a0935a77afc": {
    "pinned": true
   },
   "0b1868ae2477": {
-   "pinned": true
+   "pinned": true,
+   "launchCount": 1,
+   "lastLaunch": 1792594258
   },
   "76708c01bb2c": {
    "launchCount": 1,
@@ -97,5 +99,5 @@
   "122fc9d71743",
   "76708c01bb2c"
  ],
- "updated": 1792588750
+ "updated": 1792594331
 }
